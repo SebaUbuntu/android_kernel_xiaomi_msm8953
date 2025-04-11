@@ -1053,14 +1053,13 @@ static irqreturn_t smbchg_handle_aicl_done(int irq, void *data)
 {
 	struct smbchg_chip *chip = data;
 	int ilim;
-	int ret;
 
 	dev_dbg(chip->dev, "AICL done");
 
 	ilim = smbchg_usb_get_ilim(chip);
 	if (ilim < 0)
 		dev_warn(chip->dev, "Failed to read AICL result: %pe\n",
-			 ERR_PTR(ret));
+			 ERR_PTR(ilim));
 	else
 		dev_dbg(chip->dev, "AICL result: %uuA", ilim);
 
