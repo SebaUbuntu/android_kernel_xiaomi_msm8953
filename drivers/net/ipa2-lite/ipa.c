@@ -269,6 +269,7 @@ static int ipa_setup_ep(struct ipa *ipa, enum ipa_ep_id id)
 		iowrite32(0x002800c4, ipa->mmio + REG_IPA_EP_HDR(id));
 		iowrite32(0x0000000b, ipa->mmio + REG_IPA_EP_HDR_EXT(id));
 		iowrite32(0xff000000, ipa->mmio + REG_IPA_EP_HDR_METADATA_MASK(id));
+		break;
 	default:
 		break;
 	}
@@ -533,6 +534,7 @@ static int ipa_init_sram_part(struct ipa *ipa, enum ipa_part_id mem_id)
 
 		while (payload <= end)
 			*(payload++) = val | 1;
+		break;
 	default:
 		break;
 	}
@@ -873,8 +875,10 @@ static int ipa_enqueue_skb(struct sk_buff *skb, struct net_device *ndev, struct 
 	if (ep->is_rx) {
 		WARN_ON(skb);
 		skb = netdev_alloc_skb(ndev, len);
-		if (!skb)
+		if (!skb) {
+			ret = -ENOMEM;
 			goto release_desc;
+		}
 	} else if (unlikely(dump)) {
 		char prefix[8] = "TX EP  ";
 
@@ -885,7 +889,8 @@ static int ipa_enqueue_skb(struct sk_buff *skb, struct net_device *ndev, struct 
 
 	dma_addr_t addr = dma_map_single(dev, skb->data, len, EP_DMA_DIR(ep));
 
-	if (dma_mapping_error(dev, addr))
+	ret = dma_mapping_error(dev, addr);
+	if (ret)
 		goto free_skb;
 
 	desc.addr = addr;
