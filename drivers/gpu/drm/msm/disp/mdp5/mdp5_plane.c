@@ -174,7 +174,10 @@ static void mdp5_plane_calc_bw(struct drm_plane_state *state, struct drm_crtc_st
 	u32 hw_latency_lines;
 	u32 prefill_div;
 	u64 scale_factor;
-	int vbp, vpw, vfp;
+	int vbp, vpw;
+#if 0
+	int vfp;
+#endif
 
 	src_width = drm_rect_width(&state->src) >> 16;
 	src_height = drm_rect_height(&state->src) >> 16;
@@ -182,7 +185,9 @@ static void mdp5_plane_calc_bw(struct drm_plane_state *state, struct drm_crtc_st
 	fps = drm_mode_vrefresh(mode);
 	vbp = mode->vtotal - mode->vsync_end;
 	vpw = mode->vsync_end - mode->vsync_start;
+#if 0
 	vfp = mode->vsync_start - mode->vdisplay;
+#endif
 	scale_factor = src_height > dst_height ?
 		mult_frac(src_height, 1, dst_height) : 1;
 
