@@ -82,7 +82,7 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
 	of_property_read_string_index(np, "firmware-name", 0, &signed_fwname);
 	if (signed_fwname) {
 		fwname = signed_fwname;
-		ret = request_firmware_direct(&fw, fwname, gpu->dev->dev);
+		ret = request_firmware(&fw, fwname, gpu->dev->dev);
 		if (ret)
 			fw = ERR_PTR(ret);
 	} else if (fwname) {
